@@ -20,7 +20,9 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
         size: 2,
         height: 0.5,
     });
-    const textMaterialL = new THREE.MeshBasicMaterial({ color: 0xa2b7b3 }); // Change color to #a2b7b3
+
+	//no 3 favorite color
+    const textMaterialL = new THREE.MeshBasicMaterial({ color: 0xa2b7b3 });
     const textMeshL = new THREE.Mesh(textGeometryL, textMaterialL);
     textMeshL.position.set(-2, 0, 0);
     scene.add(textMeshL);
@@ -31,11 +33,15 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
         size: 2,
         height: 0.5,
     });
-    const textMaterial3 = new THREE.MeshBasicMaterial({ color: 0x5d484c }); // Complementary color of #a2b7b3
+
+	//no 3 complementary color
+    const textMaterial3 = new THREE.MeshBasicMaterial({ color: 0x5d484c });
     const textMesh3 = new THREE.Mesh(textGeometry3, textMaterial3);
     textMesh3.position.set(2, 0, 0);
     scene.add(textMesh3);
 });
+
+
 
 // camera position
 camera.position.x = 1;
