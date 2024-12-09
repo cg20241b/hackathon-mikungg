@@ -22,7 +22,46 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
     });
 
 	//no 3 favorite color
-    const textMaterialL = new THREE.MeshStandardMaterial({ color: 0xa2b7b3 });
+    const ambientIntensity = 0; // because of ambient the colour fades a bit
+    const lightPosition = new THREE.Vector3(0, 0, 2); // Position of the cube
+
+    const vertexShader = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vPosition = vec3(modelViewMatrix * vec4(position, 1.0));
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `;
+
+    const fragmentShader = `
+        uniform vec3 lightPosition;
+        uniform float ambientIntensity;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+            vec3 lightDir = normalize(lightPosition - vPosition);
+            float diff = max(dot(vNormal, lightDir), 0.0);
+            vec3 reflectDir = reflect(-lightDir, vNormal);
+            vec3 viewDir = normalize(-vPosition);
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 320.0); // Moderate shininess
+            vec3 ambient = vec3(ambientIntensity);
+            vec3 diffuse = diff * vec3(0.635, 0.718, 0.702); // Diffuse color #a2b7b3
+            vec3 specular = spec * vec3(0.635, 0.718, 0.702); // Specular color related to base color
+            gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
+        }
+    `;
+
+    const textMaterialL = new THREE.ShaderMaterial({
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        uniforms: {
+            lightPosition: { value: lightPosition },
+            ambientIntensity: { value: ambientIntensity }
+        }
+    });
+
     const textMeshL = new THREE.Mesh(textGeometryL, textMaterialL);
     textMeshL.position.set(-2, 0, 0);
     scene.add(textMeshL);
@@ -35,7 +74,43 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
     });
 
 	//no 3 complementary color
-    const textMaterial3 = new THREE.MeshStandardMaterial({ color: 0x5d484c });
+    const vertexShader3 = `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+            vNormal = normalize(normalMatrix * normal);
+            vPosition = vec3(modelViewMatrix * vec4(position, 1.0));
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+    `;
+
+    const fragmentShader3 = `
+        uniform vec3 lightPosition;
+        uniform float ambientIntensity;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+            vec3 lightDir = normalize(lightPosition - vPosition);
+            float diff = max(dot(vNormal, lightDir), 0.0);
+            vec3 reflectDir = reflect(-lightDir, vNormal);
+            vec3 viewDir = normalize(-vPosition);
+            float spec = pow(max(dot(viewDir, reflectDir), 0.0), 5.0); // Increased shininess for metallic appearance
+            vec3 ambient = vec3(ambientIntensity);
+            vec3 diffuse = diff * vec3(0.635, 0.282, 0.298); // Diffuse color complementary to #a2b7b3
+            vec3 specular = spec * vec3(1.0, 1.0, 1.0); // Increased specular color intensity
+            gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
+        }
+    `;
+
+    const textMaterial3 = new THREE.ShaderMaterial({
+        vertexShader: vertexShader3,
+        fragmentShader: fragmentShader3,
+        uniforms: {
+            lightPosition: { value: lightPosition },
+            ambientIntensity: { value: ambientIntensity }
+        }
+    });
+
     const textMesh3 = new THREE.Mesh(textGeometry3, textMaterial3);
     textMesh3.position.set(2, 0, 0);
     scene.add(textMesh3);
@@ -72,7 +147,7 @@ glowCube.position.set(0, 0, 2); //position same with light
 scene.add(glowCube);
 
 // Add a point light at the position of the cube
-const pointLight = new THREE.PointLight(0xffffff, 7, 100);
+const pointLight = new THREE.PointLight(0xffffff, 2, 100);
 pointLight.position.set(0, 0, 2); //position same with cube
 scene.add(pointLight); 
 
