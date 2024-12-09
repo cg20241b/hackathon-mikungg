@@ -57,7 +57,7 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         uniforms: {
-            lightPosition: { value: lightPosition },
+            lightPosition: { value: pointLight.position },
             ambientIntensity: { value: ambientIntensity }
         }
     });
@@ -106,7 +106,7 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
         vertexShader: vertexShader3,
         fragmentShader: fragmentShader3,
         uniforms: {
-            lightPosition: { value: lightPosition },
+            lightPosition: { value: pointLight.position },
             ambientIntensity: { value: ambientIntensity }
         }
     });
@@ -164,7 +164,6 @@ function onDocumentKeyDown(event) {
     if (keyCode == 87) { // W key
         glowCube.position.y += 0.1;
         pointLight.position.y += 0.1;
-		
     } else if (keyCode == 83) { // S key
         glowCube.position.y -= 0.1;
         pointLight.position.y -= 0.1;
