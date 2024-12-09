@@ -23,7 +23,7 @@ fontLoader.load('/node_modules/three/examples/fonts/helvetiker_regular.typeface.
 
 	//no 3 favorite color
     const ambientIntensity = 0; // because of ambient the colour fades a bit
-    const lightPosition = new THREE.Vector3(0, 0, 2); // Position of the cube
+    const lightPosition = new THREE.Vector3(1, 0, 3); // Position of the cube
 
     const vertexShader = `
         varying vec3 vNormal;
@@ -136,25 +136,46 @@ const glowFragmentShader = `
 const glowMaterial = new THREE.ShaderMaterial({
     vertexShader: glowVertexShader,
     fragmentShader: glowFragmentShader,
-    side: THREE.BackSide,
-    blending: THREE.AdditiveBlending,
+    side: THREE.FrontSide,
+    blending: THREE.NoBlending,
     transparent: true
 });
 
 const glowCubeGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 const glowCube = new THREE.Mesh(glowCubeGeometry, glowMaterial);
-glowCube.position.set(0, 0, 2); //position same with light
+glowCube.position.set(1, 0, 3); //position same with light
 scene.add(glowCube);
 
 // Add a point light at the position of the cube
-const pointLight = new THREE.PointLight(0xffffff, 2, 100);
-pointLight.position.set(0, 0, 2); //position same with cube
+const pointLight = new THREE.PointLight(0xffffff, 3, 100);
+pointLight.position.set(1, 0, 3); //position same with cube
 scene.add(pointLight); 
 
 // camera position
 camera.position.x = 1;
 camera.position.y = 1;
 camera.position.z = 5; 
+
+document.addEventListener('keydown', onDocumentKeyDown, false);
+
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    // Cube movement
+    if (keyCode == 87) { // W key
+        glowCube.position.y += 0.1;
+        pointLight.position.y += 0.1;
+		
+    } else if (keyCode == 83) { // S key
+        glowCube.position.y -= 0.1;
+        pointLight.position.y -= 0.1;
+    }
+    // Camera movement
+    if (keyCode == 65) { // A key
+        camera.position.x -= 0.1;
+    } else if (keyCode == 68) { // D key
+        camera.position.x += 0.1;
+    }
+}
 
 function animate() {
 	renderer.render( scene, camera );
